@@ -217,8 +217,8 @@ class EvolutionSearcher(object):
 def main():
     sys.path.extend(["./models","./dataloader","./utils"])
     if FLAGS.dataset == "Criteo":
-        field_dim = get_stats("data/criteo/stats_2")
-        data = "data/criteo/threshold_2"
+        field_dim = get_stats("criteo/stats")
+        data = "criteo/threshold"
     elif FLAGS.dataset == "Avazu":
         field_dim = get_stats("data/avazu/stats_2")
         data = "data/avazu/threshold_2"

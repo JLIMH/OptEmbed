@@ -51,8 +51,8 @@ FLAGS(sys.argv)
 
 os.environ['CUDA_VISIBLE_DEVICES'] = str(FLAGS.gpu)
 os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
-os.environ['NUMEXPR_NUM_THREADS'] = '8'
-os.environ['NUMEXPR_MAX_THREADS'] = '8'
+os.environ['NUMEXPR_NUM_THREADS'] = '4'
+os.environ['NUMEXPR_MAX_THREADS'] = '4'
 
 class SuperNet(object):
     def __init__(self, opt):
@@ -76,7 +76,15 @@ class SuperNet(object):
         else:
             self.device = torch.device('cpu')
             opt['train']['use_cuda'] = False
-        self.model = get_supernet(opt['train']).to(self.device)
+
+        self.model = get_supernet(opt['train'], )
+        # print("AVAILABLE DEVICES : ", torch.cuda.device_count())
+        # if torch.cuda.device_count() > 1:
+        #     print("Let's use", torch.cuda.device_count(), "GPUs!!!!")
+        #     self.model = torch.nn.DataParallel(self.model)
+
+
+        self.model.to(self.device)
         
         self.criterion = F.binary_cross_entropy_with_logits
         self.optimizer = get_optimizer(self.model, opt["train"])
@@ -180,8 +188,8 @@ class SuperNet(object):
 def main():
     sys.path.extend(["./models","./dataloader","./utils"])
     if FLAGS.dataset == "Criteo":
-        field_dim = get_stats("data/criteo/stats_2")
-        data = "data/criteo/threshold_2"
+        field_dim = get_stats("criteo/stats")
+        data = "data/"
     elif FLAGS.dataset == "Avazu":
         field_dim = get_stats("data/avazu/stats_2")
         data = "data/avazu/threshold_2"
